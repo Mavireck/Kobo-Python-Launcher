@@ -1,0 +1,9 @@
+{
+	"main":{},
+	"apps":[
+		{"title":"Dashboard","command":"cd ../Kobo-Dashboard && python dashboard.py"},
+		{"title":"WolframAlpha","command":"cd ../Kobo-WolframAlpha && python WAK.py"},
+		{"title":"KOReader","command":"cd /mnt/onboard/.adds/koreader && ./nickel.sh"},
+		{"title":"Reboot","command":"reboot"}
+	]
+}
