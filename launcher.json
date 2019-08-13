@@ -3,7 +3,10 @@
 	"apps":[
 		{"title":"Dashboard","command":"cd ../Kobo-Dashboard && python dashboard.py"},
 		{"title":"WolframAlpha","command":"cd ../Kobo-WolframAlpha && python WAK.py"},
-		{"title":"KOReader","command":"cd /mnt/onboard/.adds/koreader && ./nickel.sh"},
+		{"title":"YAWK","command":"cd /mnt/onboard/.adds/yawk && python yawk.py"},
+		{"title":"PBChess","command":"cd /mnt/onboard/.adds/vlasovsoft && ./launcher.sh"},
+		{"title":"KOReader","command":"killall python && sh /mnt/onboard/.adds/koreader/startKoreaderFromPythonLauncher.sh"},
+		{"title":"Plato","command":"killall python && /mnt/onboard/.adds/plato/plato && /mnt/onboard/.adds/plato/nickel.sh"},
 		{"title":"Reboot","command":"reboot"}
 	]
 }
