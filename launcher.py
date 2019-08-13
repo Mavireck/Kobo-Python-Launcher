@@ -54,8 +54,8 @@ def printLauncher(page=current_page):
 	# Page change and reboot button (tools)
 	#TODO
 	# Apps buttons
-	for i in range(min(15,len(appsData["apps"][page*15:(page+1)*15]))):
-		app = appsData["apps"][page*15+i]
+	for i in range(min(9,len(appsData["apps"][page*9:(page+1)*9]))):
+		app = appsData["apps"][page*9+i]
 		app_x=rect_x+2*big_border
 		app_y=(i+2)*rectHeight + int(i*rectHeight/3)
 		app_w=rectWidth-4*big_border
@@ -96,14 +96,14 @@ while True:
 	if t.debounceAllow(x,y):
 		global appsAreas
 		print("Hey you clicked")
-		for i in range(min(15,len(appsData["apps"][current_page*15:(current_page+1)*15]))):
+		for i in range(min(9,len(appsData["apps"][current_page*8:(current_page+1)*9]))):
 			if KIP.coordsInArea(x,y,appsAreas[i]):
 				#Closing touch file
 				t.close()
 				#Touch indicator
 				fbink_cfg.is_flashing = True
 				fbink_cfg.is_nightmode = True
-				FBInk.fbink_refresh(fbfd, appsAreas[i][1], appsAreas[i][0], appsAreas[i][2]-appsAreas[i][0], appsAreas[i][3]-appsAreas[i][1], FBInk.HWD_PASSTHROUGH, fbink_cfg)
+				FBInk.fbink_refresh(fbfd, appsAreas[i][1]+11, appsAreas[i][0], appsAreas[i][2]-appsAreas[i][0], appsAreas[i][3]-appsAreas[i][1], FBInk.HWD_PASSTHROUGH, fbink_cfg)
 				#Closing this FBInk session
 				FBInk.fbink_close(fbfd)
 				os.system(appsData["apps"][current_page+i]["command"])
