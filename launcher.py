@@ -18,8 +18,6 @@ rect_outline = 50
 white = 255
 black = 0
 gray = 128
-screenWidth = 1080
-screenHeight = 1440
 touchPath = "/dev/input/event1"
 small_font = ImageFont.truetype("fonts/Merriweather-Regular.ttf", 26)
 small_font_bold = ImageFont.truetype("fonts/Merriweather-Bold.ttf", 26)
@@ -74,6 +72,11 @@ def printLauncher(page=current_page):
 fbink_cfg = ffi.new("FBInkConfig *")
 fbfd = FBInk.fbink_open()
 FBInk.fbink_init(fbfd, fbink_cfg)
+#Get screen infos
+state = ffi.new("FBInkState *")
+FBInk.fbink_get_state(fbink_cfg, state)
+screenWidth=state.screen_width
+screenHeight=state.screen_height
 #Clear screen
 FBInk.fbink_cls(fbfd, fbink_cfg)
 # CLEAN REFRESH
