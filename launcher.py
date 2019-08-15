@@ -175,9 +175,7 @@ while True:
 			#Closing touch file
 			t.close()
 			#Touch indicator
-			fbink_cfg.is_flashing = True
-			fbink_cfg.is_nightmode = True
-			FBInk.fbink_refresh(fbfd, rebootBtn[1]+11, rebootBtn[0], rebootBtn[2]-rebootBtn[0], rebootBtn[3]-rebootBtn[1], FBInk.HWD_PASSTHROUGH, fbink_cfg)
+			invertArea(rebootBtn)
 			#Closing this FBInk session
 			FBInk.fbink_close(fbfd)
 			os.system("reboot")
