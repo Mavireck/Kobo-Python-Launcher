@@ -1,12 +1,15 @@
 {
 	"main":{},
 	"apps":[
-		{"title":"Dashboard","command":"cd ../Kobo-Dashboard && python dashboard.py"},
-		{"title":"WolframAlpha","command":"cd ../Kobo-WolframAlpha && python WAK.py"},
-		{"title":"YAWK","command":"cd /mnt/onboard/.adds/yawk && python yawk.py"},
-		{"title":"PBChess","command":"cd /mnt/onboard/.adds/vlasovsoft && ./launcher.sh"},
-		{"title":"KOReader","command":"killall python && sh /mnt/onboard/.adds/koreader/startKoreaderFromPythonLauncher.sh"},
-		{"title":"Plato","command":"killall python && /mnt/onboard/.adds/plato/plato && /mnt/onboard/.adds/plato/nickel.sh"},
-		{"title":"Reboot","command":"reboot"}
+		{"title":"Dashboard","killKPLOnClick":true,"command":"cd ../Kobo-Dashboard && python dashboard.py"},
+		{"title":"WolframAlpha","killKPLOnClick":true,"command":"cd ../Kobo-WolframAlpha && python WAK.py"},
+		{"title":"YAWK","killKPLOnClick":true,"command":"cd /mnt/onboard/.adds/yawk && python yawk.py"},
+		{"title":"PBChess","killKPLOnClick":true,"command":"cd /mnt/onboard/.adds/vlasovsoft && ./launcher.sh"},
+		{"title":"KOReader","killKPLOnClick":true,"command":"killall python && sh /mnt/onboard/.adds/koreader/startKoreaderFromPythonLauncher.sh"},
+		{"title":"Plato","killKPLOnClick":true,"command":"killall python && /mnt/onboard/.adds/plato/plato && /mnt/onboard/.adds/plato/nickel.sh"},
+		{"title":"7","killKPLOnClick":false,"command":"echo 7"},
+		{"title":"8","killKPLOnClick":false,"command":""},
+		{"title":"9","killKPLOnClick":false,"command":""},
+		{"title":"10","killKPLOnClick":false,"command":""}
 	]
 }
