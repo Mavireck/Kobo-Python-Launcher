@@ -1,11 +1,12 @@
 {
 	"main":{},
 	"apps":[
+		{"title":"[R] KOReader","killKPLOnClick":true,"command":"killall python && sh /mnt/onboard/.adds/koreader/startKoreaderFromPythonLauncher.sh"},
+		{"title":"[R] Plato","killKPLOnClick":true,"command":"killall python && cd /mnt/onboard/.adds/plato && export LD_LIBRARY_PATH='/mnt/onboard/.adds/plato/libs' && export PRODUCT=$(/bin/kobo_config.sh) && RUST_BACKTRACE=1 /mnt/onboard/.adds/plato/plato && /mnt/onboard/.adds/plato/nickel.sh"},
+		{"title":"[R] PBChess","killKPLOnClick":true,"command":"cd /mnt/onboard/.adds/vlasovsoft && ./launcher.sh"},
 		{"title":"Dashboard","killKPLOnClick":true,"command":"cd ../Kobo-Dashboard && python dashboard.py"},
 		{"title":"WolframAlpha","killKPLOnClick":true,"command":"cd ../Kobo-WolframAlpha && python WAK.py"},
 		{"title":"YAWK","killKPLOnClick":true,"command":"cd /mnt/onboard/.adds/yawk && python yawk.py"},
-		{"title":"PBChess","killKPLOnClick":true,"command":"cd /mnt/onboard/.adds/vlasovsoft && ./launcher.sh"},
-		{"title":"KOReader","killKPLOnClick":true,"command":"killall python && sh /mnt/onboard/.adds/koreader/startKoreaderFromPythonLauncher.sh"},
-		{"title":"Plato","killKPLOnClick":true,"command":"killall python && /mnt/onboard/.adds/plato/plato && /mnt/onboard/.adds/plato/nickel.sh"}
+		{"title":"Serpentin","killKPLOnClick":true,"command":"killall python && cd /mnt/onboard/.adds/mavireck/serpentin && python3 /mnt/onboard/.adds/mavireck/serpentin/serpentin_kobo.py"}
 	]
 }

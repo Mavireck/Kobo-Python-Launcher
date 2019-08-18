@@ -21,6 +21,6 @@ export LD_LIBRARY_PATH="libs:${LD_LIBRARY_PATH}"
 # Stop kobo software because it's running
 killall nickel hindenburg sickel fickel fmon > /dev/null 2>&1
 
-# ./nickel_dash.sh &
+
 cd /mnt/onboard/.adds/mavireck/Kobo-Python-Launcher
 python launcher.py
