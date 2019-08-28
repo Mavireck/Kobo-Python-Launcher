@@ -9,7 +9,10 @@ from PIL import Image, ImageDraw, ImageFont
 # My own librairies (Kobo-Input-Python, Kobo-Python-OSKandUtils)
 sys.path.append('../Kobo-Input-Python')
 sys.path.append('../Kobo-Python-OSKandUtils')
+sys.path.append('../Kobo-Screen-Stack-Manager')
 import KIP
+import kssm
+import kssmObjectsLibrairy as KOL
 import osk
 import threading
 
@@ -20,162 +23,115 @@ white = 255
 black = 0
 gray = 128
 light_gray = 230
-touchPath = "/dev/input/event1"
 small_font = ImageFont.truetype("fonts/Merriweather-Regular.ttf", 26)
 small_font_bold = ImageFont.truetype("fonts/Merriweather-Bold.ttf", 26)
 title_font = ImageFont.truetype("fonts/Merriweather-Regular.ttf", 30)
 title_font_bold = ImageFont.truetype("fonts/Merriweather-Bold.ttf", 30)
 
-appsAreas=[]
-toolsAreas=[]
-current_page = 0
-previousBtn=[]
-rebootBtn=[]
-nextBtn=[]
+current_page=0
+apps_per_page = 8
 
 with open('launcher.json') as json_file:
 	appsData = json.load(json_file)
 
+
 def printLauncher(page=current_page):
-	"""
-	Prints a laucher page
-	"""
-	# Init image
-	global appsAreas
-	global previousBtn
-	global nextBtn
-	global rebootBtn
-	global current_page
 	current_page = page
-	img = Image.new('L', (screenWidth+1,screenHeight+1), color=white)
-	bg = ImageDraw.Draw(img, 'L')
-	border=10
-	big_border=30
-	appsAreas=[] #reset
+	border = 10
+	big_border = 3*border
 	## Building the menu
 	# Main title
 	rectWidth=int(5*screenWidth/6)
 	titleRectHeight=int(screenHeight/10)
-	rectHeight = int(screenHeight/15)
+	rectHeight = int(screenHeight/(apps_per_page+7))
 	rect_x = int(screenWidth/12)
-	bg.rectangle([(rect_x,big_border),(rect_x+rectWidth,big_border+titleRectHeight)],fill=rect_color,outline=rect_outline)
-	title_w,title_h = bg.textsize("Welcome to the PythonLauncher!", font=title_font_bold)
-	bg.text((rect_x+int(0.5*rectWidth-0.5*title_w),big_border+int(0.5*titleRectHeight-0.5*title_h)),"Welcome to the PythonLauncher!",font=title_font_bold,fill=0)
+	titleObj = KOL.rectangle(rect_x,big_border,rectWidth,titleRectHeight,rect_color,rect_outline)
+	titleObj = KOL.add_centeredText(titleObj,"Welcome to the PythonLauncher!",title_font_bold)
+	screen.addObj(titleObj)
 	# Apps buttons
-	for i in range(min(8,len(appsData["apps"][page*8:(page+1)*8]))):
-		app = appsData["apps"][page*8+i]
+	appObjs = []
+	for i in range(min(apps_per_page,len(appsData["apps"][page*apps_per_page:(page+1)*apps_per_page]))):
+		app = appsData["apps"][page*apps_per_page+i]
 		app_x=rect_x+2*big_border
 		app_y=(i+2)*rectHeight + int(i*rectHeight/3)
 		app_w=rectWidth-4*big_border
 		app_h=rectHeight
-		appsAreas.append([app_x,app_y,app_x+app_w,app_y+app_h])
-		bg.rectangle([(app_x,app_y),(app_x+app_w,app_y+app_h)],fill=white,outline=rect_outline)
-		app_text_w,app_text_h = bg.textsize(app["title"], font=small_font)
-		bg.text((app_x+int(0.5*app_w-0.5*app_text_w),app_y+int(0.5*app_h-0.5*app_text_h)),app["title"],font=small_font,fill=0)
+		appObj = KOL.rectangle(app_x,app_y,app_w,app_h,fill=white,outline=rect_outline)
+		appObj = KOL.add_centeredText(appObj,app["title"],small_font)
+		appObj.onclickInside = execCommand
+		appObj.data = app
+		screen.addObj(appObj)	
 	# Page change and reboot button (tools)
 	pagebtn_x=rect_x+2*big_border
-	pagabtn_y=(8+2)*rectHeight + int(8*rectHeight/3)
-	pagebtn_w=int((rectWidth-8*big_border)/3)
+	pagabtn_y=(apps_per_page+2)*rectHeight + int(apps_per_page*rectHeight/3)
+	pagebtn_w=int((rectWidth-apps_per_page*big_border)/3)
 	pagebtn_h=rectHeight
 	#Previous
 	pagebtn_x_temp=rect_x+2*big_border
 	text="Previous"
 	color = black if current_page>0 else light_gray
-	previousBtn=[pagebtn_x_temp,pagabtn_y,pagebtn_x_temp+pagebtn_w,pagabtn_y+pagebtn_h,color!=light_gray]
-	bg.rectangle([(previousBtn[0],previousBtn[1]),(previousBtn[2],previousBtn[3])],fill=white,outline=rect_outline)
-	page_text_w,page_text_h = bg.textsize(text, font=small_font_bold)
-	bg.text((previousBtn[0]+int(0.5*pagebtn_w-0.5*page_text_w),previousBtn[1]+int(0.5*pagebtn_h-0.5*page_text_h)),text,font=small_font_bold,fill=color)
+	previousObj = KOL.rectangle(pagebtn_x_temp,pagabtn_y,pagebtn_w,pagebtn_h,fill=white,outline=rect_outline)
+	previousObj = KOL.add_centeredText(previousObj,text,small_font,color)
+	previousObj.onclickInside = previousPage
+	previousObj.data = color == black
+	screen.addObj(previousObj)
 	#Current and reboot
 	pagebtn_x_temp += pagebtn_w + 2*big_border
 	text="Page " + str(current_page) + '\r\n' + "Reboot"
-	rebootBtn =[pagebtn_x_temp,pagabtn_y,pagebtn_x_temp+pagebtn_w,pagabtn_y+pagebtn_h]
-	bg.rectangle([(rebootBtn[0],rebootBtn[1]),(rebootBtn[2],rebootBtn[3])],fill=white,outline=rect_outline)
-	page_text_w,page_text_h = bg.textsize(text, font=small_font_bold)
-	bg.text((rebootBtn[0]+int(0.5*pagebtn_w-0.5*page_text_w),rebootBtn[1]+int(0.5*pagebtn_h-0.5*page_text_h)),text,font=small_font_bold,fill=0)
+	currentObj = KOL.rectangle(pagebtn_x_temp,pagabtn_y,pagebtn_w,pagebtn_h,fill=white,outline=rect_outline)
+	currentObj = KOL.add_centeredText(currentObj,text,small_font,0)
+	previousObj.onclickInside = reboot
+	screen.addObj(currentObj)
 	#Next
 	pagebtn_x_temp += pagebtn_w + 2*big_border
 	text="Next"
 	color = black if len(appsData["apps"][page*8:])>8 else light_gray
-	nextBtn=[pagebtn_x_temp,pagabtn_y,pagebtn_x_temp+pagebtn_w,pagabtn_y+pagebtn_h,color!=light_gray]
-	bg.rectangle([(nextBtn[0],nextBtn[1]),(nextBtn[2],nextBtn[3])],fill=white,outline=rect_outline)
-	page_text_w,page_text_h = bg.textsize(text, font=small_font_bold)
-	bg.text((nextBtn[0]+int(0.5*pagebtn_w-0.5*page_text_w),nextBtn[1]+int(0.5*pagebtn_h-0.5*page_text_h)),text,font=small_font_bold,fill=color)
-	# Saving background and displaying it
-	raw_data=img.tobytes("raw")
-	raw_len = len(raw_data)
-	FBInk.fbink_print_raw_data(fbfd, raw_data, screenWidth+1, screenHeight+1, raw_len, 0, 0, fbink_cfg)
-	return True
-
-def invertArea(area,isBlack=False):
-	if isBlack:
-		fbink_cfg.is_nightmode = False
-	else:
-		fbink_cfg.is_nightmode = True
-	fbink_cfg.is_flashing = True
-	FBInk.fbink_refresh(fbfd, area[1]+11, area[0], area[2]-area[0], area[3]-area[1], FBInk.HWD_PASSTHROUGH, fbink_cfg)
-	fbink_cfg.is_nightmode = False
-	fbink_cfg.is_flashing = False
-	return True
+	nextObj = KOL.rectangle(pagebtn_x_temp,pagabtn_y,pagebtn_w,pagebtn_h,fill=white,outline=rect_outline)
+	nextObj = KOL.add_centeredText(nextObj,text,small_font,color)
+	previousObj.onclickInside = nextPage
+	previousObj.data = color == black
+	screen.addObj(nextObj)
 
 
+def execCommand(obj):
+	print("ExecCommand executed")
+	#Touch indicator
+	obj.invert(1)
+	if obj.data["killKPLOnClick"]:
+		#Closing this FBInk session
+		kssm.FBInk.fbink_close(kssm.fbfd)
+		#Closing touch file
+		touch.close()
+	#executing the actual command
+	os.system(obj.data["command"])
 
-fbink_cfg = ffi.new("FBInkConfig *")
-fbfd = FBInk.fbink_open()
-FBInk.fbink_init(fbfd, fbink_cfg)
-#Get screen infos
-state = ffi.new("FBInkState *")
-FBInk.fbink_get_state(fbink_cfg, state)
-screenWidth=state.screen_width
-screenHeight=state.screen_height
-#Clear screen
-FBInk.fbink_cls(fbfd, fbink_cfg)
-# CLEAN REFRESH
-fbink_cfg.is_flashing = True
-FBInk.fbink_refresh(fbfd, 0, 0, 0, 0, FBInk.HWD_PASSTHROUGH, fbink_cfg)
-fbink_cfg.is_flashing = False
+def previousPage(obj):
+	obj.invert(1)
+	if obj.data:
+		printLauncher(current_page-1) 
 
-#Print the main image:
-printLauncher(0)
+
+def nextPage(obj):
+	obj.invert(1)
+	if obj.data:
+		printLauncher(current_page+1) 
+
+def reboot(obj):
+	obj.invert(0)
+	os.system("reboot")
+
+
+screenWidth = kssm.screen_width
+screenHeight = kssm.screen_height
 
 # INITIALIZING TOUCH
 touchPath = "/dev/input/event1"
-t = KIP.inputObject(touchPath, screenWidth, screenHeight)
+touch = KIP.inputObject(touchPath, screenWidth, screenHeight)
 
-while True:
-	try:
-		(x, y, err) = t.getInput()
-	except:
-		continue
-	if t.debounceAllow(x,y):
-		global appsAreas
-		global previousBtn
-		global nextBtn
-		global rebootBtn
-		global current_page
-		for i in range(min(8,len(appsData["apps"][current_page*8:(current_page+1)*8]))):
-			if KIP.coordsInArea(x,y,appsAreas[i]):
-				#Touch indicator
-				invertArea(appsAreas[i])
-				if appsData["apps"][current_page+i]["killKPLOnClick"]:
-					#Closing this FBInk session
-					FBInk.fbink_close(fbfd)
-					#Closing touch file
-					t.close()
-				else:
-					#Removing touch indicator after touch
-					
-					threading.Timer(0.1,invertArea,[appsAreas[i],True]).start()
-				#executing the actual command
-				os.system(appsData["apps"][current_page+i]["command"])
-		if KIP.coordsInArea(x,y,previousBtn) and previousBtn[4]:
-			printLauncher(current_page-1) 
-		elif KIP.coordsInArea(x,y,nextBtn) and nextBtn[4]:
-			printLauncher(current_page+1)
-		elif KIP.coordsInArea(x,y,rebootBtn):
-			#Closing touch file
-			t.close()
-			#Touch indicator
-			invertArea(rebootBtn)
-			#Closing this FBInk session
-			FBInk.fbink_close(fbfd)
-			os.system("reboot")
+screen = kssm.ScreenStackManager(touch,'Main Manager')
+# screen.refresh()
+screen.createCanvas()
+printLauncher(page=0)
+
+# screen.startListenerThread()
+screen.listenForTouch() # No need for multithreading here
