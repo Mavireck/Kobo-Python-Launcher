@@ -45,7 +45,7 @@ def printLauncher(page=current_page):
 	titleRectHeight=int(screenHeight/10)
 	rectHeight = int(screenHeight/(apps_per_page+7))
 	rect_x = int(screenWidth/12)
-	titleObj = KOL.rectangle(rect_x,big_border,rectWidth,titleRectHeight,rect_color,rect_outline)
+	titleObj = KOL.roundedRectangle(rect_x,big_border,rectWidth,titleRectHeight,fill=rect_color,outline=rect_outline)
 	titleObj = KOL.add_centeredText(titleObj,"Welcome to the PythonLauncher!",title_font_bold)
 	screen.addObj(titleObj)
 	# Apps buttons
