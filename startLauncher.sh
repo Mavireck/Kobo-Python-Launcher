@@ -5,9 +5,26 @@
 cd "${0%/*}" || exit 1
 
 
-# Siphon a few things from nickel's environment
-eval "$(xargs -n 1 -0 <"/proc/$(pidof nickel)/environ" | grep -e DBUS_SESSION_BUS_ADDRESS -e DBUS_SESSION -e NICKEL_HOME -e WIFI_MODULE -e LANG -e WIFI_MODULE_PATH -e INTERFACE 2>/dev/null)"
-export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION NICKEL_HOME WIFI_MODULE LANG WIFI_MODULE_PATH INTERFACE
+if pgrep nickel > /dev/null
+then
+    echo "Nickel Running"
+    # Siphon a few things from nickel's environment
+	eval "$(xargs -n 1 -0 <"/proc/$(pidof nickel)/environ" | grep -e DBUS_SESSION_BUS_ADDRESS -e DBUS_SESSION -e NICKEL_HOME -e WIFI_MODULE -e LANG -e WIFI_MODULE_PATH -e INTERFACE 2>/dev/null)"
+	export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION NICKEL_HOME WIFI_MODULE LANG WIFI_MODULE_PATH INTERFACE
+	# Stop kobo software because it's running
+	killall nickel hindenburg sickel fickel fmon > /dev/null 2>&1
+else
+    echo "Nickel is not running "
+fi
+
+if pgrep plato > /dev/null
+then
+    echo "Plato Running"
+    killall plato
+else
+    echo "PLato is not running"
+fi
+
 
 # Flush the disks: might help avoid damaging nickel's DB...
 sync
@@ -28,9 +45,6 @@ if [ "${PLATFORM}" != "freescale" ] && [ ! -e "/etc/u-boot/${PLATFORM}/u-boot.mm
     PLATFORM="ntx508"
 fi
 export PLATFORM
-
-# Stop kobo software because it's running
-killall nickel hindenburg sickel fickel fmon > /dev/null 2>&1
 
 
 cd /mnt/onboard/.adds/mavireck/Kobo-Python-Launcher
