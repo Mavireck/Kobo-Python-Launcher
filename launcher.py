@@ -11,8 +11,8 @@ sys.path.append('../Kobo-Input-Python')
 sys.path.append('../Kobo-Python-OSKandUtils')
 sys.path.append('../Kobo-Screen-Stack-Manager')
 import KIP
-import kssm
-import kssmObjectsLibrairy as KOL
+import pssm
+import pssmObjectsLibrairy as POL
 import osk
 import threading
 
@@ -45,8 +45,8 @@ def printLauncher(page=current_page):
 	titleRectHeight=int(screenHeight/10)
 	rectHeight = int(screenHeight/(apps_per_page+7))
 	rect_x = int(screenWidth/12)
-	titleObj = KOL.roundedRectangle(rect_x,big_border,rectWidth,titleRectHeight,fill=rect_color,outline=rect_outline)
-	titleObj = KOL.add_centeredText(titleObj,"Welcome to the PythonLauncher!",title_font_bold)
+	titleObj = POL.roundedRectangle(rect_x,big_border,rectWidth,titleRectHeight,fill=rect_color,outline=rect_outline)
+	titleObj = POL.add_centeredText(titleObj,"Welcome to the PythonLauncher!",title_font_bold)
 	screen.addObj(titleObj)
 	# Apps buttons
 	appObjs = []
@@ -56,8 +56,8 @@ def printLauncher(page=current_page):
 		app_y=(i+2)*rectHeight + int(i*rectHeight/3)
 		app_w=rectWidth-4*big_border
 		app_h=rectHeight
-		appObj = KOL.rectangle(app_x,app_y,app_w,app_h,fill=white,outline=rect_outline)
-		appObj = KOL.add_centeredText(appObj,app["title"],small_font)
+		appObj = POL.rectangle(app_x,app_y,app_w,app_h,fill=white,outline=rect_outline)
+		appObj = POL.add_centeredText(appObj,app["title"],small_font)
 		appObj.onclickInside = execCommand
 		appObj.data = app
 		screen.addObj(appObj)	
@@ -70,24 +70,24 @@ def printLauncher(page=current_page):
 	pagebtn_x_temp=rect_x+2*big_border
 	text="Previous"
 	color = black if current_page>0 else light_gray
-	previousObj = KOL.rectangle(pagebtn_x_temp,pagabtn_y,pagebtn_w,pagebtn_h,fill=white,outline=rect_outline)
-	previousObj = KOL.add_centeredText(previousObj,text,small_font,color)
+	previousObj = POL.rectangle(pagebtn_x_temp,pagabtn_y,pagebtn_w,pagebtn_h,fill=white,outline=rect_outline)
+	previousObj = POL.add_centeredText(previousObj,text,small_font,color)
 	previousObj.onclickInside = previousPage
 	previousObj.data = color == black
 	screen.addObj(previousObj)
 	#Current and reboot
 	pagebtn_x_temp += pagebtn_w + 2*big_border
 	text="Page " + str(current_page) + '\r\n' + "Reboot"
-	currentObj = KOL.rectangle(pagebtn_x_temp,pagabtn_y,pagebtn_w,pagebtn_h,fill=white,outline=rect_outline)
-	currentObj = KOL.add_centeredText(currentObj,text,small_font,0)
+	currentObj = POL.rectangle(pagebtn_x_temp,pagabtn_y,pagebtn_w,pagebtn_h,fill=white,outline=rect_outline)
+	currentObj = POL.add_centeredText(currentObj,text,small_font,0)
 	previousObj.onclickInside = reboot
 	screen.addObj(currentObj)
 	#Next
 	pagebtn_x_temp += pagebtn_w + 2*big_border
 	text="Next"
 	color = black if len(appsData["apps"][page*8:])>8 else light_gray
-	nextObj = KOL.rectangle(pagebtn_x_temp,pagabtn_y,pagebtn_w,pagebtn_h,fill=white,outline=rect_outline)
-	nextObj = KOL.add_centeredText(nextObj,text,small_font,color)
+	nextObj = POL.rectangle(pagebtn_x_temp,pagabtn_y,pagebtn_w,pagebtn_h,fill=white,outline=rect_outline)
+	nextObj = POL.add_centeredText(nextObj,text,small_font,color)
 	previousObj.onclickInside = nextPage
 	previousObj.data = color == black
 	screen.addObj(nextObj)
@@ -99,7 +99,7 @@ def execCommand(obj):
 	obj.invert(1)
 	if obj.data["killKPLOnClick"]:
 		#Closing this FBInk session
-		kssm.FBInk.fbink_close(kssm.fbfd)
+		pssm.FBInk.fbink_close(pssm.fbfd)
 		#Closing touch file
 		touch.close()
 	#executing the actual command
@@ -121,14 +121,14 @@ def reboot(obj):
 	os.system("reboot")
 
 
-screenWidth = kssm.screen_width
-screenHeight = kssm.screen_height
+screenWidth = pssm.screen_width
+screenHeight = pssm.screen_height
 
 # INITIALIZING TOUCH
 touchPath = "/dev/input/event1"
 touch = KIP.inputObject(touchPath, screenWidth, screenHeight)
 
-screen = kssm.ScreenStackManager(touch,'Main Manager')
+screen = pssm.ScreenStackManager(touch,'Main Manager')
 # screen.refresh()
 screen.createCanvas()
 printLauncher(page=0)
