@@ -156,19 +156,19 @@ while True:
 			if KIP.coordsInArea(x,y,appsAreas[i]):
 				#Touch indicator
 				invertArea(appsAreas[i])
-				if appsData["apps"][current_page+i]["killKPLOnClick"]:
+				if appsData["apps"][current_page*8+i]["killKPLOnClick"]:
 					#Closing this FBInk session
 					FBInk.fbink_close(fbfd)
 					#Closing touch file
 					t.close()
 				else:
 					#Removing touch indicator after touch
-					
+
 					threading.Timer(0.1,invertArea,[appsAreas[i],True]).start()
 				#executing the actual command
-				os.system(appsData["apps"][current_page+i]["command"])
+				os.system(appsData["apps"][current_page*8+i]["command"])
 		if KIP.coordsInArea(x,y,previousBtn) and previousBtn[4]:
-			printLauncher(current_page-1) 
+			printLauncher(current_page-1)
 		elif KIP.coordsInArea(x,y,nextBtn) and nextBtn[4]:
 			printLauncher(current_page+1)
 		elif KIP.coordsInArea(x,y,rebootBtn):
