@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 import sys
 import os
-# Load the wrapper module, it's linked against FBInk, so the dynamic loader will take care of pulling in the actual FBInk library
-from _fbink import ffi, lib as FBInk
+import threading
 import json
 from copy import deepcopy
 # Load Pillow
@@ -10,13 +9,11 @@ from PIL import Image, ImageDraw, ImageFont
 # My own librairies (Kobo-Input-Python, Kobo-Python-OSKandUtils)
 sys.path.append('../Kobo-Input-Python')
 sys.path.append('../Kobo-Python-OSKandUtils')
-sys.path.append('/mnt/onboard/.adds/mavireck/Python-Screen-Stack-Manager')
-import KIP
+sys.path.append('../Python-Screen-Stack-Manager')
 import pssm
 import pssmObjectsLibrairy as POL
-import pssm_kobo
-import osk
-import threading
+import pssm_kobo as pssm_device
+
 
 # Setup
 rect_color = 200
@@ -25,10 +22,14 @@ white = 255
 black = 0
 gray = 128
 light_gray = 230
-small_font = ImageFont.truetype("fonts/Merriweather-Regular.ttf", 26)
-small_font_bold = ImageFont.truetype("fonts/Merriweather-Bold.ttf", 26)
-title_font = ImageFont.truetype("fonts/Merriweather-Regular.ttf", 30)
-title_font_bold = ImageFont.truetype("fonts/Merriweather-Bold.ttf", 30)
+Merri_regular = os.path.join("fonts", "Merriweather-Regular.ttf")
+Merri_bold = os.path.join("fonts", "Merriweather-Bold.ttf")
+small_font_size = int(pssm_device.screen_height/52)
+title_font_size = int(pssm_device.screen_height/46)
+small_font = ImageFont.truetype(Merri_regular, small_font_size)
+small_font_bold = ImageFont.truetype(Merri_bold, small_font_size)
+title_font = ImageFont.truetype(Merri_regular, title_font_size)
+title_font_bold = ImageFont.truetype(Merri_bold, title_font_size)
 
 current_page=0
 apps_per_page = 8
@@ -138,7 +139,7 @@ def debug(objId,objData):
 		print(obj, obj.name, obj.tags, obj.y, obj.id)
 
 
-screen = pssm.ScreenStackManager(pssm_kobo,'Main Manager')
+screen = pssm.ScreenStackManager(pssm_device,'Main Manager')
 screenWidth = screen.width
 screenHeight = screen.height
 # screen.refresh()
@@ -158,5 +159,5 @@ screen.addObj(titleObj)
 # Menu entries
 printLauncher(page=0)
 
-# screen.startListenerThread()
-screen.listenForTouch() # No need for multithreading here
+screen.startListenerThread()
+#screen.listenForTouch() # No need for multithreading here
