@@ -98,7 +98,7 @@ def printLauncher(page=0):
 	screen.addObj(nextObj)
 
 
-def execCommand(objId):
+def execCommand(objId,objData):
 	print("ExecCommand executed")
 	#Touch indicator
 	obj=screen.findObjWithId(objId)
@@ -111,7 +111,7 @@ def execCommand(objId):
 	#executing the actual command
 	os.system(obj.data["command"])
 
-def previousPage(objId):
+def previousPage(objId,objData):
 	global current_page
 	# screen.printInvertedObj(1,obj)
 	obj=screen.findObjWithId(objId)
@@ -120,7 +120,7 @@ def previousPage(objId):
 		printLauncher(current_page-1)
 
 
-def nextPage(objId):
+def nextPage(objId,objData):
 	global current_page
 	# screen.printInvertedObj(1,obj)
 	obj=screen.findObjWithId(objId)
@@ -128,12 +128,12 @@ def nextPage(objId):
 		screen.removeAllWithTag("page"+str(current_page))
 		printLauncher(current_page+1)
 
-def reboot(rebootObjId):
+def reboot(rebootObjId,objData):
 	screen.printInvertedObj(1,rebootObjId)
 	os.system("reboot")
 
 
-def debug(objId):
+def debug(objId,objData):
 	for obj in screen.stack:
 		print(obj, obj.name, obj.tags, obj.y, obj.id)
 
