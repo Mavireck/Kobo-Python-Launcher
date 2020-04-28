@@ -12,7 +12,13 @@ sys.path.append('../Kobo-Python-OSKandUtils')
 sys.path.append('../Python-Screen-Stack-Manager')
 import pssm
 import pssmObjectsLibrairy as POL
-import pssm_kobo as pssm_device
+import platform
+if platform.machine() in ["x86","AMD64","i686","x86_64"]:
+	# If it is a non-ARM device, it is likely to be used on a computer -> emulator
+	# TODO : make a better test (get the device's precise name for instance or something like that)
+	import pssm_opencv as pssm_device
+else:
+	import pssm_kobo as pssm_device
 
 
 # Setup
