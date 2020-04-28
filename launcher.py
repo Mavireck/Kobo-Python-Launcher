@@ -165,5 +165,4 @@ screen.addObj(titleObj)
 # Menu entries
 printLauncher(page=0)
 
-screen.startListenerThread()
-#screen.listenForTouch() # No need for multithreading here
+screen.startListenerThread(grabInput=True)
