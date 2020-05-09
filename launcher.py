@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import json
-sys.path.append('../')
+sys.path.append('../Python-Screen-Stack-Manager')
 import platform
 import os
 if platform.machine() in ["x86","AMD64","i686","x86_64"]:
@@ -97,7 +97,7 @@ def reboot(elt,coords):
 #Declare the Screen Stack Manager
 screen = pssm.ScreenStackManager(device,'Main')
 #Start Touch listener, as a separate thread
-screen.startListenerThread()
+screen.startListenerThread(grabInput=True)
 #Clear and refresh the screen
 screen.clear()
 screen.refresh()

@@ -6,6 +6,9 @@
 		{"title":"[R] PBChess","killKPLOnClick":true,"command":"cd /mnt/onboard/.adds/vlasovsoft && ./launcher.sh"},
 		{"title":"Dashboard","killKPLOnClick":true,"command":"cd ../Kobo-Dashboard && python dashboard.py"},
 		{"title":"WolframAlpha","killKPLOnClick":true,"command":"cd ../Kobo-WolframAlpha && python WAK.py"},
-		{"title":"YAWK","killKPLOnClick":true,"command":"cd /mnt/onboard/.adds/yawk && python yawk.py"}
+		{"title":"YAWK","killKPLOnClick":true,"command":"cd /mnt/onboard/.adds/yawk && python yawk.py"},
+		{"title":"Serpentin","killKPLOnClick":true,"command":"killall python && cd /mnt/onboard/.adds/mavireck/serpentin && python3 /mnt/onboard/.adds/mavireck/serpentin/serpentin_kobo.py"},
+		{"title":"Horloge Simple","killKPLOnClick":true,"command":"killall python && python /mnt/onboard/.adds/mavireck/Kobo-SimpleClock/simpleClock.py"},
+		{"title":"Conway - Game of Life","killKPLOnClick":true,"command":"killall python && python /mnt/onboard/.adds/mavireck/Kobo-GameOfLife/conway.py"}
 	]
 }
