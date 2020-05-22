@@ -10,7 +10,6 @@ else:
 	device = "Kobo"
 
 import pssm
-import pssmElementsLibrairy as PEL
 
 
 current_page = 0
@@ -30,26 +29,29 @@ def printPage(page=0):
 			'text' : app["title"],
 			'font_size' : 20,
 			'onclickInside' : execCommand,
-			'user_data' : app
+			'user_data' : app,
+			'invertOnClick': True,
+			'invertDuration': 0
 		})
 	# For technical reasons I prefer always to have 8 items in my list, so let's add some fake ones if there aren't 8 already
 	for i in range(apps_per_page-number_of_items):
 		list_items.append({
 			'text' : "",
 			'font_size' : 20,
-			'outline':PEL.white
+			'invertOnClick': False,
+			'outline_color':pssm.white
 		})
-	buttonList  = PEL.ButtonList(buttons=list_items, margins=[30,30,100,100], spacing=10)
+	buttonList  = pssm.ButtonList(buttons=list_items, margins=[30,30,100,100], spacing=10)
 	# Now for the other buttons
-	button_welcome  = PEL.Button(text="Welcome to the PythonLauncher!",radius=20, background_color = 220, font=PEL.Merri_bold, font_size = 35)
+	button_welcome  = pssm.Button(text="Welcome to the PythonLauncher!",radius=20, background_color = 220, font=pssm.Merri_bold, font_size = 35, wrap_textOverflow = False)
 	reboot_text     = "Page " + str(current_page) + '\r\n' + "Reboot"
 	is_previousPage = current_page>0
 	is_nextPage 	= len(appsData["apps"][page*8:])>8
-	previous_color  = PEL.black if is_previousPage else PEL.light_gray
-	next_color      = PEL.black if is_nextPage else PEL.light_gray
-	button_reboot   = PEL.Button(reboot_text, onclickInside = reboot)
-	button_previous = PEL.Button("Previous",  onclickInside = previousPage, text_color=previous_color, user_data = is_previousPage)
-	button_next     = PEL.Button("Next",      onclickInside = nextPage,     text_color=next_color    , user_data = is_nextPage)
+	previous_color  = pssm.black if is_previousPage else pssm.light_gray
+	next_color      = pssm.black if is_nextPage else pssm.light_gray
+	button_reboot   = pssm.Button(reboot_text, onclickInside = reboot, invertOnClick	= True, invertDuration = 0)
+	button_previous = pssm.Button("Previous",  onclickInside = previousPage, text_color = previous_color, user_data = is_previousPage, invertOnClick= True, invertDuration = 0)
+	button_next     = pssm.Button("Next",      onclickInside = nextPage,     text_color = next_color    , user_data = is_nextPage, invertOnClick	= True, invertDuration = 0)
 	menu = [
 		[30                                                                                                             ],
 		[130,            (None,80),                       (button_welcome,"?"),                    (None,80)            ],
@@ -57,15 +59,13 @@ def printPage(page=0):
 		[100,(None,30), (button_previous,"?"), (None,30), (button_reboot,"?"), (None,30), (button_next,"?"), (None,30)  ],
 		[30                                                                                                             ]
 	]
-	menuLayout = PEL.Layout(menu,screen.area)
+	menuLayout = pssm.Layout(menu,screen.area)
 	last_page_id = menuLayout.id
 	screen.addElt(menuLayout)
 
 
 def execCommand(elt,coords):
 	print("ExecCommand executed")
-	#Touch indicator
-	screen.invertElt(elt.id,1)
 	if elt.user_data["killKPLOnClick"]:
 		#Closing this FBInk session
 		screen.device.closePrintHandler()
@@ -89,7 +89,6 @@ def nextPage(elt,coords):
 		printPage(current_page+1)
 
 def reboot(elt,coords):
-	screen.invertElt(elt.id)
 	os.system("reboot")
 
 
@@ -101,8 +100,6 @@ screen.startListenerThread(grabInput=True)
 #Clear and refresh the screen
 screen.clear()
 screen.refresh()
-# Create a blank canvas
-screen.createCanvas()
 
 with open('launcher.json') as json_file:
 	appsData = json.load(json_file)
